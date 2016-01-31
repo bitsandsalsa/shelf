@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+{% include "add_entry.html" %}
+	{% if entries %}
+	<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable" id="shelfDocTable">
+	  <thead>
+		<tr class="w3-light-grey">
+		  <th>Status</th>
+		  <th>Format</th>
+		  <th>Citation</th>
+		  <th>Document</th>
+		  <th>Summary</th>
+		</tr>
+	  </thead>
+	  {% for entry in entries %}
+	  <tr>
+		<td>{{ entry.status }}</td>
+		<td>{{ entry.format }}</td>
+		<td>{{ entry.citation }}</td>
+		<td><a href="{{ docs_dir }}/{{ entry.document_id }}">{{ entry.friendly_name }}</a></td>
+		<td>{{ entry.summary }}</td>
+	  </tr>
+	  {% endfor %}
+	</table>
+	{% else %}
+	No entries yet
+	{% endif %}
+  </p>
+{% endblock %}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Shelf</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/w3.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/jquery.dataTables.min.css') }}">
+  <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-2.1.4.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.dataTables.min.js') }}"></script>
+  <script type="text/javascript">
+	$(document).ready(function() {
+	  $('#shelfDocTable').dataTable();
+	});
+  </script>
+</head>
+<body class="w3-container">
+  <header class="w3-container w3-blue-grey">
+	<h1 style="text-align:center">Shelf</h1>
+	{% for message in get_flashed_messages() %}
+    <div class="w3-container w3-deep-orange">
+	  <span onclick="this.parentElement.style.display='none'" class="w3-closebtn">x</span>
+	  {{ message }}
+	</div>
+	{% endfor %}
+  </header>
+  {% block body %}{% endblock %}
+</body>
+</html>

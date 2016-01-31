@@ -1,0 +1,57 @@
+<script type="text/javascript">
+  function toggle_visibility(id) {
+  var e = document.getElementById(id);
+  if(e.style.display == 'block')
+  e.style.display = 'none';
+  else
+  e.style.display = 'block';
+  }
+</script>
+
+<p><button class="w3-btn w3-blue-grey w3-border" type="button" onclick="toggle_visibility('add-entry-area')">add entry</button></p>
+<div class="w3-card-4 w3-padding-jumbo" id="add-entry-area" style="display:none">
+  <form class="w3-container" action="{{ url_for('add_entry') }}" method="post" autocomplete="off" enctype="multipart/form-data">
+	<p>
+	  <label>Citation:</label>
+	  <textarea class="w3-input w3-border" rows="3" name="citation" required></textarea>
+	</p>
+
+	<p>
+	  <label>Status:</label>
+	  <br>
+	  <select name="status" required>
+		<option value="" disabled selected>Choose status</option>
+		<option value="1">done</option>
+		<option value="2">pending</option>
+		<option value="3">unread</option>
+	  </select>
+	</p>
+
+	<p>
+	  <label>Format:</label>
+	  <br>
+	  <select name="format" required>
+		<option value="" disabled selected>Choose format</option>
+		<option value="1">conference paper</option>
+		<option value="2">conference presentation</option>
+		<option value="3">vendor whitepaper</option>
+	  </select>
+	</p>
+
+	<p>
+	  <label>Summary:</label>
+	  <textarea class="w3-input w3-border" rows="5" name="summary"></textarea>
+	</p>
+
+	<p>
+	  <label>Document:</label>
+	  <br>
+	  <input type="file" name="document" required>
+	</p>
+
+	<p class="w3-right">
+	  <button class="w3-btn w3-blue-grey" type="submit">Add</button>
+	</p>
+  </form>
+</div>
+<p>
