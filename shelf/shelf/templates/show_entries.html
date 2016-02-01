@@ -14,10 +14,10 @@
 	  </thead>
 	  {% for entry in entries %}
 	  <tr>
-		<td>{{ entry.status }}</td>
-		<td>{{ entry.format }}</td>
+		<td>{{ entry.status.status }}</td>
+		<td>{{ entry.format.format }}</td>
 		<td>{{ entry.citation }}</td>
-		<td><a href="{{ docs_dir }}/{{ entry.document_id }}">{{ entry.friendly_name }}</a></td>
+		<td><a href="{{ docs_url + entry.document.document_id }}">{{ entry.document.friendly_name }}</a></td>
 		<td>{{ entry.summary }}</td>
 	  </tr>
 	  {% endfor %}

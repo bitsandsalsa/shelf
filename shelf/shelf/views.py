@@ -2,25 +2,17 @@ import os.path
 import random
 import string
 
-from flask import g, render_template, flash, redirect, url_for, request, abort, send_file
+from flask import render_template, flash, redirect, url_for, request, abort, send_file
 from flask.ext import uploads
 
+import model
+from model import db
 from shelf import app
-from shelf.database import get_db, query_db
+
 
 documents = uploads.UploadSet('documents', uploads.DOCUMENTS + uploads.TEXT + ('pdf', 'ppt'))
 uploads.configure_uploads(app, documents)
 
-
-@app.before_request
-def before_request():
-    g.db = get_db()
-
-@app.teardown_appcontext
-def close_db(error):
-    """Closes the database again at the end of the request."""
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
 
 class Document(object):
     doc_id_chars = string.letters + string.digits
@@ -36,17 +28,14 @@ class Document(object):
 
     def store(self):
         self.doc_id = self.gen_doc_id()
-        g.db.execute(
-            'insert into documents (document_id, fs_name, friendly_name) values (?, ?, ?)',
-            [self.doc_id, self.fs_name, self.friendly_name]
-        )
-        g.db.commit()
+        db.session.add(model.Document(self.doc_id, self.fs_name, self.friendly_name))
+        db.session.commit()
 
     @classmethod
     def load(cls, doc_id):
-        filename_res = query_db('select fs_name, friendly_name from documents where document_id=''?''', [doc_id], True)
+        filename_res = model.Document.query.filter_by(document_id=doc_id).first()
         if filename_res:
-            return Document(filename_res['fs_name'], filename_res['friendly_name'])
+            return Document(filename_res.fs_name, filename_res.friendly_name)
         else:
             return None
 
@@ -54,17 +43,12 @@ class Document(object):
 
 @app.route('/')
 def show_entries():
-    entries = query_db(' '.join([
-        'SELECT statuses.status, formats.format, entries.citation, entries.document_id, entries.summary, documents.friendly_name',
-        'FROM entries',
-        'INNER JOIN statuses ON statuses.id=entries.status_id',
-        'INNER JOIN formats ON formats.id=entries.format_id',
-        'INNER JOIN documents ON documents.document_id=entries.document_id'
-    ]))
+    entries = model.Entry.query.all()
     return render_template(
         'show_entries.html',
         entries=entries,
-        docs_dir=documents.config.destination
+        docs_url=documents.config.base_url,
+        allowed_exts=documents.extensions
     )
 
 @app.route('/add', methods=['POST'])
@@ -78,17 +62,14 @@ def add_entry():
     doc = Document(fs_name, friendly_name)
     doc.store()
 
-    g.db.execute(
-        'insert into entries (status_id, format_id, citation, document_id, summary) values (?, ?, ?, ?, ?)',
-        [
-            request.form['status'],
-            request.form['format'],
-            request.form['citation'],
-            doc.doc_id,
-            request.form['summary']
-        ]
-    )
-    g.db.commit()
+    db.session.add(model.Entry(
+        request.form['status'],
+        request.form['format'],
+        request.form['citation'],
+        doc.doc_id,
+        request.form['summary']
+    ))
+    db.session.commit()
 
     flash('New entry was successfully added')
     return redirect(url_for('show_entries'))
@@ -99,6 +80,6 @@ def show_doc(doc_id):
     if doc is None:
         abort(404)
     return send_file(
-        documents.path(doc.fs_name),
+        os.path.join('..', documents.path(doc.fs_name)),
         **{'as_attachment': True, 'attachment_filename': doc.friendly_name}
     )
