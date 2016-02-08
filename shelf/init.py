@@ -1,5 +1,3 @@
-#NOTE: Be sure to delete database file and uploads directory before running this
-
 import shutil
 import os
 

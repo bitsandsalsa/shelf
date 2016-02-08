@@ -15,6 +15,10 @@ uploads.configure_uploads(app, documents)
 
 
 class Document(object):
+    """
+    Class to mediate storing and retrieving documents to and from database.
+    """
+
     doc_id_chars = string.letters + string.digits
 
     def __init__(self, fs_name, friendly_name):
