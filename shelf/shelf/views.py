@@ -41,6 +41,14 @@ class Document(object):
 
 ## routes ##
 
+@app.route(app.static_url_path + '/scripts')
+def scripts():
+    abort(404)
+
+@app.route(app.static_url_path + '/styles')
+def styles():
+    abort(404)
+
 @app.route('/')
 def show_entries():
     entries = model.Entry.query.all()
