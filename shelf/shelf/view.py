@@ -3,15 +3,18 @@ import random
 import string
 
 from flask import render_template, flash, redirect, url_for, request, abort, send_file
-from flask.ext import uploads
+import flask_uploads
 
 import model
 from model import db
 from shelf import app
 
 
-documents = uploads.UploadSet('documents', uploads.DOCUMENTS + uploads.TEXT + ('pdf', 'ppt'))
-uploads.configure_uploads(app, documents)
+documents = flask_uploads.UploadSet(
+    'documents',
+    flask_uploads.DOCUMENTS + flask_uploads.TEXT + ('pdf', 'ppt')
+)
+flask_uploads.configure_uploads(app, documents)
 
 
 class Document(object):
