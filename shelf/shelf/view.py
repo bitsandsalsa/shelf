@@ -69,7 +69,7 @@ def show_entries():
 @app.route('/add', methods=['POST'])
 def add_entry():
     friendly_name = request.files['document'].filename
-    if '..' in friendly_name or '/' in friendly_name:
+    if '..' in friendly_name or '/' in friendly_name or '\r' in friendly_name or '\n' in friendly_name:
         flash('Bad filename')
         return redirect(url_for('show_entries'))
 
